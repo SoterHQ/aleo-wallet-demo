@@ -12,17 +12,20 @@ export default function CustomHeader() {
      * 设置钱包地址
      */
     const [address, setAddress] = useState("")
-    useEffect(()=>{
-        connectWallet()
-    },[])
-
-    useEffect(()=>{
-        // @ts-ignore
-        if (window && window.wallet){
+    useEffect(() => {
+        if (hasWallet()) {
             connectWallet()
         }
+        // @ts-ignore
+    }, [window, window.wallet])
 
-    },[window])
+    /**
+     *
+     */
+    function hasWallet() {
+        // @ts-ignore
+        return window && window.wallet
+    }
 
     async function connectWallet() {
         let isConnect = walletConnected()
@@ -72,10 +75,8 @@ export default function CustomHeader() {
         {
             address ? <WalletDropDowm text={address}/> : <CustomButton
                 buttonText={"Connect Wallet"}
-                onclick={()=>{
-
-                    // @ts-ignore
-                    if (!window.wallet){
+                onclick={() => {
+                    if (!hasWallet()) {
                         return
                     }
                     connectWallet()
