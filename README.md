@@ -1,6 +1,7 @@
 # aleo-wallet-demo
 
-[toc]
-## Build
+## Build & Run
 
-yarn install
+`yarn install`
+
+`yarn start`
