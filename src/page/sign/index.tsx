@@ -1,83 +1,87 @@
-import { Button, Divider, Input, Space, Typography } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
-import TextArea from "antd/lib/input/TextArea";
-import { useState } from "react";
-import { sign } from "../../api";
-import { useStore } from "../../context";
+import {Button, Input} from "antd";
+import {useState} from "react";
+import {useStore} from "../../context";
 import EllipsisMiddle from "../../components/EllipsisMiddle";
 import ViewMarkDown from "../../components/ViewMarkDown";
+import {useWallet} from "@soterhq/aleo-wallet-adapter-react";
+import {WalletNotConnectedError} from "@soterhq/aleo-wallet-adapter-base";
+import {SoterWalletAdapter} from "@soterhq/aleo-wallet-adapter-soter";
 
 export default function Sign() {
-	const [signMessage, setSignMessage] = useState("");
-	const [state, dispatch] = useStore();
-	const [signature, setSignature] = useState("");
+  const [signMessage, setSignMessage] = useState("");
+  const [signature, setSignature] = useState("");
 
-	const startDec = WorkerConnect()
+  const startDec = WorkerConnect();
 
+  const { wallet, publicKey } = useWallet();
 
-	function WorkerConnect() {
-		return (`
-###  示例代码:
+  function WorkerConnect() {
+    return `
+###  sample code:
 ~~~ js
-await window.wallet.features['standard:sign'].sign("message")
+
+const message = new TextEncoder().encode(signMessage);
+
+await window.soterWallet.signMessage(message) 
 ~~~
-          `)
-	}
+          `;
+  }
 
-	function isDisabled() {
-		return signMessage === "";
-	}
+  function isDisabled() {
+    return signMessage === "" || signMessage.trim() === "";
+  }
 
-	async function handleSign() {
-		// TODO 调用钱包的转账接口  type:transfer
-		let data = await sign({ message: signMessage });
-		console.log(data.result);
-		setSignature(data.result);
-	}
-	return (
-		<div style={{ margin: "16px" }}>
+  async function handleSign() {
+    if (!publicKey) throw new WalletNotConnectedError();
 
+    const message = new TextEncoder().encode(signMessage);
 
-			<h1>SIGN</h1>
+    // let data = await sign(message);
+    const signatureBytes:any = await (
+      wallet?.adapter as SoterWalletAdapter
+    ).signMessage(message);
+    setSignature(signatureBytes.result);
+  }
 
+  return (
+    <div style={{ margin: "16px" }}>
+      <h1>Sign</h1>
 
+      <div>
+        <Input
+          style={{ width: "60%", marginRight: "20px" }}
+          size={"large"}
+          placeholder={"Message To Sign"}
+          onChange={e => {
+            setSignMessage(e.target.value);
+          }}
+        />
 
-			<div>
-				<Input
-					style={{ width: "60%", marginRight: "20px" }}
-					size={"large"}
-					placeholder={"Message To Sign"}
-					onChange={e => {
-						setSignMessage(e.target.value);
-					}}
-				/>
+        {publicKey ? (
+          <Button
+            size={"large"}
+            type="primary"
+            style={{ marginLeft: "8px" }}
+            disabled={isDisabled()}
+            onClick={handleSign}>
+            Submit
+          </Button>
+        ) : (
+          <Button size={"large"} type="primary" disabled>
+            Connect Your Wallet
+          </Button>
+        )}
+      </div>
+      <div style={{ margin: "20px 0", fontSize: "16px" }}>
+        {" "}
+        {signature ? (
+          <p>
+            signature: <span>{EllipsisMiddle({ suffixCount: 8, children: signature })}</span>
+          </p>
+        ) : null}
+      </div>
 
-				{state.walletConnected ? (
-					<Button
-						size={"large"}
-						type="primary"
-						style={{ marginLeft: "8px" }}
-						disabled={isDisabled()}
-						onClick={handleSign}>
-						Submit
-					</Button>
-				) : (
-					<Button size={"large"} type="primary" disabled>
-						Connect Your Wallet
-					</Button>
-				)}
-			</div>
-			<div style={{ margin: "20px 0", fontSize: "16px" }}>
-				{" "}
-				{signature ? (
-					<p>
-						signature: <span>{EllipsisMiddle({ suffixCount: 8, children: signature })}</span>
-					</p>
-				) : null}
-			</div>
-
-
-			<ViewMarkDown textContent={startDec} darkMode={false}/>
-		</div>
-	);
+      <ViewMarkDown textContent={startDec} darkMode={false} />
+    </div>
+  );
 }

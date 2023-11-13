@@ -5,6 +5,8 @@ import Transfer from "../page/transfer";
 import Sign from "../page/sign";
 import Execute from "../page/Execute";
 import Records from "../page/records";
+import PrivacyPolicy from "../page/PrivacyPolicy";
+import DeployPage from "../page/deploy";
 
 const routes: RouteObject[] = [
     {
@@ -30,6 +32,14 @@ const routes: RouteObject[] = [
       path: "/execute",
       element: <Execute/>,
   },
+    {
+        path: "/deploy",
+        element: <DeployPage/>,
+    },
+    {
+        path: "/PrivacyPolicy",
+        element: <PrivacyPolicy/>,
+    },
 ];
 
 export default routes

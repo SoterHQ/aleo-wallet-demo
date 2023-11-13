@@ -7,8 +7,12 @@ import {
 	HomeOutlined,
 	InsertRowBelowOutlined,
 	SwapOutlined,
+	SettingOutlined,
+	FileSearchOutlined
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import PrivacyPolicy from "../page/PrivacyPolicy";
+
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -23,11 +27,13 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
 	getItem("Connect Wallet", "/", <HomeOutlined />),
-	getItem("Sign", "/sign", <FileProtectOutlined />),
+	getItem("Sign", "/sign", <FileSearchOutlined />),
 	getItem("Records", "/records", <FileProtectOutlined />),
 	getItem("Decrypt", "/decrypt", <InsertRowBelowOutlined />),
 	getItem("Transfer", "/transfer", <SwapOutlined />),
+	getItem("Deploy", "/deploy", <SettingOutlined />),
 	getItem("Execute", "/execute", <LaptopOutlined />),
+	getItem("PrivacyPolicy", "/PrivacyPolicy", <img style={{width: "14px"}} src={"./policy.svg"}/>),
 ];
 
 export default function MenuSlder() {
@@ -36,7 +42,9 @@ export default function MenuSlder() {
 	const [collapsed, setCollapsed] = useState(false);
 	return (
 		<Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
-			<img src={"./logo.svg"} style={{ width: "100%", height: "70px", textAlign: "center" }} />
+			<div style={{display: "flex", justifyContent: "center", alignContent: "center",padding:"18px"}}>
+				<img src={"./logo_icon.png"} style={{width: "50%", height: "50%", textAlign: "center"}}/>
+			</div>
 			<Menu
 				theme="dark"
 				defaultSelectedKeys={["1"]}

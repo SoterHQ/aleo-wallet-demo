@@ -1,9 +1,13 @@
 {
-  "name": "casdoor-login-page",
+  "name": "aleo-wallet-demo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@soterhq/aleo-wallet-adapter-react": "^0.0.1",
+    "@soterhq/aleo-wallet-adapter-reactui": "^0.0.2",
+    "@soterhq/aleo-wallet-adapter-soter": "^0.0.2",
     "@craco/craco": "^7.1.0",
+    "@demox-labs/aleo-wallet-adapter-leo": "^0.0.18",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -12,6 +16,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "antd": "^5.5.0",
+    "babel-loader": "^9.1.3",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
@@ -21,6 +26,8 @@
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
+    "source-map-loader": "^4.0.1",
+    "ts-loader": "^9.5.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },
@@ -48,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@soterhq/aleo-wallet-adapter-base": "^0.0.1",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-syntax-highlighter": "^15.5.7",
     "less": "^4.1.3",

@@ -1,73 +1,74 @@
 import "./index.css"
-import {Button, Input} from "antd";
-import React, {useEffect, useState} from "react";
-import {useStore} from "../../context";
-import {decryptRecord} from "../../api";
-import {DecryptRecordData, RecordData} from "../../model";
-import ReactJson from "react-json-view";
+import { Button, Input, message } from "antd";
+import React, { useState } from "react";
+import { useStore } from "../../context";
 import ViewMarkDown from "../../components/ViewMarkDown";
+import { useWallet } from "@soterhq/aleo-wallet-adapter-react";
+import { WalletNotConnectedError } from "@soterhq/aleo-wallet-adapter-base";
 
 export default function Decrypt() {
-    const [cipher, setCipher] = useState("")
-    const [recordData, setRecordData] = useState({} as DecryptRecordData)
+  const [cipher, setCipher] = useState("")
+  const [recordData, setRecordData] = useState("")
 
-    const [state, dispatch] = useStore()
+  const startDec = WorkerConnect()
 
+  const { publicKey, decrypt } = useWallet();
 
-    const startDec = WorkerConnect()
+  function WorkerConnect() {
+    return (`
 
-
-    function WorkerConnect() {
-        return (`
-
-###  示例代码：
+###  sample code:
 
 ~~~ js
-await window.wallet.features['standard:decrypt'].decrypt(["your record"])
+await window.soterWallet.decrypt("your record")
 ~~~
           `)
+  }
+
+  async function OnclickDecrypt() {
+    if (!publicKey) throw new WalletNotConnectedError();
+    if (decrypt) {
+      const decryptedPayload = await decrypt(cipher);
+      if (decryptedPayload) {
+        setRecordData(decryptedPayload);
+      } else {
+        message.info("This record does not belong to this account!")
+      }
     }
 
-    async function OnclickDecrypt() {
-        let data = await decryptRecord(cipher)
-        console.log(data)
-        if (data && data.length>0) {
-            setRecordData(data[0])
-        } else {
-            setRecordData({} as DecryptRecordData)
-        }
-    }
 
-    return (<div style={{margin: "16px"}}>
-        <h1>DECRYPT</h1>
-        <div style={{display: "flex", width: "100%"}}>
-            <Input.TextArea value={cipher} rows={3} placeholder={"Cipher Text To Decrypt"} onChange={(e) => {
-                setCipher(e.target.value)
-            }}/>
-            <div style={{marginLeft: "16px"}}>
-                {
-                    state.walletConnected ?
-                        <Button type="primary" style={{marginLeft: "8px"}} disabled={cipher == ""}
-                                onClick={OnclickDecrypt}>Decrypt</Button> :
-                        <Button type="primary" disabled>Connect Your Wallet
-                        </Button>
-                }
-            </div>
-        </div>
+  }
+
+  return (<div style={{ margin: "16px" }}>
+    <h1>Decrypt</h1>
+    <div style={{ display: "flex", width: "100%" }}>
+      <Input.TextArea value={cipher} rows={3} placeholder={"Cipher Text To Decrypt"} onChange={(e) => {
+        setCipher(e.target.value)
+      }} />
+      <div style={{ marginLeft: "16px" }}>
         {
-            recordData && recordData.dyRecord ?
-                <div style={{
-                    width: "100%",
-                    background: "white",
-                    marginTop: "16px",
-                    padding: "16px",
-                    borderRadius: "5px"
-                }}>
-                    <div style={{whiteSpace:"pre-wrap",color:"green",fontWeight:"400",lineHeight:"2"}}>{recordData.dyRecord}</div>
-                </div> : null
+          publicKey ?
+            <Button type="primary" style={{ marginLeft: "8px" }} disabled={cipher == ""}
+              onClick={OnclickDecrypt}>Decrypt</Button> :
+            <Button type="primary" disabled>Connect Your Wallet
+            </Button>
         }
+      </div>
+    </div>
+    {
+      recordData ?
+        <div style={{
+          width: "100%",
+          background: "white",
+          marginTop: "16px",
+          padding: "16px",
+          borderRadius: "5px"
+        }}>
+          <div style={{ whiteSpace: "pre-wrap", color: "green", fontWeight: "400", lineHeight: "2" }}>{recordData}</div>
+        </div> : null
+    }
 
-        <ViewMarkDown textContent={startDec} darkMode={false}/>
+    <ViewMarkDown textContent={startDec} darkMode={false} />
 
-    </div>)
+  </div>)
 }

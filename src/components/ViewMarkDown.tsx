@@ -38,15 +38,17 @@ const ViewMarkDown = (props: tProps) => {
           return !inline && match ? (
             <div style={{position: 'relative',}}>
               {/*<Copy/>*/}
+              {/* @ts-ignore */}
               <SyntaxHighlighter
                 showLineNumbers={false}
                 style={darkMode ? theme.dark : theme.light}
                 language={match[1]}
                 wrapLongLines={true}
+                children={String(children).replace(/\n/, '')}
                 {...props}
-              >
-                {String(children).replace(/\n/, '')}
-              </SyntaxHighlighter>
+              />
+                
+              {/* </SyntaxHighlighter> */}
             </div>
           ) : (
             <code className={className} {...props}>

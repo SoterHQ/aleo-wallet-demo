@@ -1,0 +1,11 @@
+
+  .content-container {
+    padding-bottom: 45px;
+  }
+
+  .tab-bar-container {
+    position: fixed;
+    bottom: 0;
+    height: 45px;
+    z-index: 999;
+  }
